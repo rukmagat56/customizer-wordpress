@@ -1,0 +1,560 @@
+<?php
+require get_template_directory() . '/customizer-repeater/functions.php';
+
+// registring bootstrap scripts and styles
+function wpdocs_theme_name_scripts()
+{
+    
+
+    wp_enqueue_style('google', 'https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;1,400&amp;display=swap', array(), '5.1.1', 'all');
+
+    wp_enqueue_style('icon', 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css', array(), '5.1.1', 'all');
+
+    wp_enqueue_style('gfont', 'https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,600;1,600&amp;display=swap', array(), '5.1.1', 'all');
+
+    wp_enqueue_style('fWeight', 'https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,300;0,500;0,600;0,700;1,300;1,500;1,600;1,700&amp;display=swap', array(), '5.1.1', 'all');
+
+    wp_enqueue_style('wpdocs_style', get_template_directory_uri() . '/assets/css/styles.css', array(), '5.1.1', 'all');
+    wp_enqueue_style('wpdocs_style', get_template_directory_uri() . '/assets/css/style.php', array(), '5.1.1', 'all');
+
+    wp_enqueue_script('script', get_template_directory_uri() . 'assets/js/scripts.js', array(), '5.1.1', 'all');
+
+    wp_enqueue_script('cdm', 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js', array(), '5.1.1', 'all');
+
+    wp_enqueue_script('forms', 'https://cdn.startbootstrap.com/sb-forms-latest.js', array(), '5.1.1', 'all');
+}
+add_action('wp_enqueue_scripts', 'wpdocs_theme_name_scripts');
+
+// registering nav menus 
+register_nav_menus(array(
+    'primary_menu' => __('Primary Menu', 'bootstrapTemplate'),
+    'footer_menu'  => __('Footer Menu', 'boostrapTemplate'),
+
+));
+
+//styling
+
+function add_class_li($classes, $item, $args)
+{
+    if (isset($args->li_class)) {
+        $classes[] = $args->li_class;
+    }
+    return $classes;
+}
+add_filter('nav_menu_css_class', 'add_class_li', 10, 3);
+
+function add_anchor_class($attr, $item, $args)
+{
+    if (isset($args->a_class)) {
+        $attr['class'] = $args->a_class;
+    }
+    return $attr;
+}
+add_filter('nav_menu_link_attributes', 'add_anchor_class', 10, 3);
+
+
+// -----------------------------customizer starts------------------------------------
+
+function theme_customizer_function($wp_customize)
+{
+    $wp_customize->add_panel('landing_panel', array(
+        'title' => 'landing panel',
+        'priority' => 10,
+        'capability' => 'edit_theme_options',
+    ));
+    $wp_customize->add_section('landing_page_home', array(
+        'title' => 'Home Section',
+        'description' => __('Home Section Customizer'),
+        'panel' => 'landing_panel'
+    ));
+    //-----------------------------------colors in customizer--------------------------------
+
+    $wp_customize->add_section('color_section', array(
+        'title' => 'Color changing section',
+        'description' => __('color section customizer'),
+        'panel' => 'landing_panel'
+    ));
+
+    $wp_customize->add_setting('color_first', array(
+        'default' => '#212529',
+    ));
+    $wp_customize->add_control(new WP_Customize_Color_Control(
+        $wp_customize,
+        'color_first',
+        array(
+            'label' => 'Section color',
+            'section' => 'color_section',
+
+        )
+    ));
+
+    //-----------------------------------hide and show-------------------------
+
+    //hide show first section
+
+    $wp_customize->add_section('show_hide_section', array(
+        'title' => 'show/hide section',
+        'description' => __('show hide section customizer'),
+        'panel' => 'landing_panel'
+    ));
+
+
+    // hide show second section
+    $wp_customize->add_setting('show_hide_first', array());
+
+    $wp_customize->add_control('show_hide_first', array(
+        'label' => 'Show hide first section',
+        'section' => 'show_hide_section',
+        'type' => 'radio',
+        'choices' => array(
+            'true' => __('show'),
+            'false' => __('hide'),
+        ),
+    ));
+
+
+    ///check box to hide second section
+    $wp_customize->add_setting('show_hide_second', array());
+
+    $wp_customize->add_control('show_hide_second', array(
+        'label' => 'Tick button to hide second section',
+        'section' => 'show_hide_section',
+        'type' => 'checkbox',
+
+    ));
+    //check box to hide third section
+
+    $wp_customize->add_setting('show_hide_third', array());
+    $wp_customize->add_control('show_hide_third', array(
+        'label' => 'Tick button to hide third section',
+        'section' => 'show_hide_section',
+        'type' => 'checkbox',
+
+    ));
+    //----------------------------- -----------------navbar setting--------------------------------------------
+    $wp_customize->add_setting('landing_small_header', array(
+        'default' => __('Start Bootstrap'),
+    ));
+    $wp_customize->add_control('landing_small_header', array(
+        'label' => 'Navbar heading',
+        'section' => 'landing_page_home',
+
+    ));
+
+    // ----------------------------------------------------footer setting----------------------------------
+    $wp_customize->add_setting('copyright', array(
+
+        'default' => __('&copy Your Website 2022. All Rights Reserved.'),
+    ));
+    $wp_customize->add_control('copyright', array(
+        'label' => 'footer',
+        'section' => 'landing_page_home',
+
+
+    ));
+
+
+    // --------------------------------------------------------section first------------------------------------------------
+    // section first heading
+    $wp_customize->add_setting('section_first_heading', array(
+        'default' => __('Showcase your app beautifully
+    '),
+    'sanitize_callback' => 'theme_slug_sanitize_file',
+    ));
+    $wp_customize->add_control('section_first_heading', array(
+        'label' => 'Section First heading',
+        'section' => 'landing_page_home',
+
+    ));
+
+    //section first paragraph
+    $wp_customize->add_setting('section_first_disc', array(
+        'default' => __('Launch your mobile app landing page faster with this free, open source theme from Start Bootstrap!'),
+    ));
+
+    $wp_customize->add_control('section_first_disc', array(
+        'label' => 'Section first paragarph',
+        'section' => 'landing_page_home',
+        'type' => 'textarea',
+    ));
+
+    //section first google image
+    $wp_customize->add_setting('section_first_google_image', array(
+        'default' => '',
+    ));
+
+    $wp_customize->add_control(new WP_Customize_Image_Control(
+        $wp_customize,
+        'section_first_google_image',
+        array(
+            'label' => 'Section first google image',
+            'section' => 'landing_page_home',
+            'type' => 'image'
+        )
+    ));
+
+    // section first apple image
+    $wp_customize->add_setting('section_first_apple_image', array(
+        'default' => '',
+    ));
+
+    $wp_customize->add_control(new WP_Customize_Image_Control(
+        $wp_customize,
+        'section_first_apple_image',
+        array(
+            'label' => 'Section first apple image',
+            'section' => 'landing_page_home',
+            'type' => 'image'
+        )
+    ));
+
+    //section first video
+    $wp_customize->add_setting('section_first_video', array(
+        'default' => '',
+    ));
+
+    $wp_customize->add_control(new WP_Customize_Media_Control(
+        $wp_customize,
+        'section_first_video',
+        array(
+            'label' => 'Section first video',
+            'section' => 'landing_page_home',
+            'mime_type' => 'video',
+        )
+    ));
+
+    // ---------------------------------------------------------second section-------------------------------------------------
+
+    $wp_customize->add_section('second_section_page', array(
+        'title' => 'Second Section',
+        'description' => __('Second section customizer'),
+        'panel' => 'landing_panel'
+
+    ));
+       //------------------------------repater---------------------------------------------
+      /* Creating a setting for the repeater. */
+       $wp_customize->add_setting( 'customizer_repeater_example', array(
+        'sanitize_callback' => 'customizer_repeater_sanitize'
+     ));
+     $wp_customize->add_control( new Customizer_Repeater( $wp_customize, 'customizer_repeater_example', array(
+   'label'   => esc_html__('Example','customizer-repeater'),
+   'section' => 'second_section_page',
+   'priority' => 1,
+   'customizer_repeater_image_control' => true,
+   'customizer_repeater_icon_control' => true,
+   'customizer_repeater_title_control' => true,
+   'customizer_repeater_subtitle_control' => true,
+   'customizer_repeater_text_control' => true,
+   'customizer_repeater_link_control' => true,
+   'customizer_repeater_shortcode_control' => true,
+   'customizer_repeater_repeater_control' => true
+) ) );
+
+
+
+    //second section disc
+    $wp_customize->add_setting('second_section_disc', array(
+        'default' => __('An intuitive solution to a common problem that we all face, wrapped up in a single app!'),
+    ));
+
+    $wp_customize->add_control('second_section_disc', array(
+        'label' => 'Section second paragarph',
+        'section' => 'second_section_page',
+        'type' => 'textarea',
+    ));
+
+    //
+    $wp_customize->selective_refresh->add_partial(
+        'second_section_disc',
+        array(
+            'selector' => '.text_quote',
+            'container_inclusive' => false,
+            'render_callback' => function () {
+                get_theme_mod('second_section_disc');
+            }
+        )
+    );
+    //second section image
+    $wp_customize->add_setting('second_section_image', array(
+        'default' => '',
+    ));
+
+    $wp_customize->add_control(new WP_Customize_Image_Control(
+        $wp_customize,
+        'second_section_image',
+        array(
+            'label' => 'Section second image',
+            'section' => 'second_section_page',
+            'type' => 'image'
+        )
+    ));
+
+    //--------------------------------------------------third section------------------------------------------------
+
+    $wp_customize->add_section('third_section_page', array(
+        'title' => 'Third Section',
+        'description' => __('Third section customizer'),
+        'panel' => 'landing_panel'
+    ));
+
+    // third section video
+    $wp_customize->add_setting('section_third_video', array(
+        'default' => '',
+    ));
+
+    $wp_customize->add_control(new WP_Customize_Media_Control(
+        $wp_customize,
+        'section_third_video',
+        array(
+            'label' => 'Section third video',
+            'section' => 'third_section_page',
+            'mime_type' => 'video',
+        )
+    ));
+
+    // third section items 
+
+    //item1 heading
+
+    $wp_customize->add_setting('third_item1_heading', array(
+        'default' => 'Device Mockups',
+    ));
+
+    $wp_customize->add_control('third_item1_heading', array(
+        'label' => 'Section third item1 heading',
+        'section' => 'third_section_page',
+
+    ));
+
+    //item1 desc
+    $wp_customize->add_setting('third_item1_disc', array(
+        'default' => 'Ready to use HTML/CSS device mockups, no Photoshop required!',
+    ));
+
+    $wp_customize->add_control('third_item1_disc', array(
+        'label' => 'Section third item1 discription',
+        'section' => 'third_section_page',
+        'type' => 'textarea',
+    ));
+
+    //item2 heading
+
+    $wp_customize->add_setting('third_item2_heading', array(
+        'default' => 'Flexible Use',
+    ));
+
+    $wp_customize->add_control('third_item2_heading', array(
+        'label' => 'Section third item2 heading',
+        'section' => 'third_section_page',
+
+    ));
+
+    //item2 desc
+    $wp_customize->add_setting('third_item2_disc', array(
+        'default' => 'Put an image, video, animation, or anything else in the screen!',
+    ));
+
+    $wp_customize->add_control('third_item2_disc', array(
+        'label' => 'Section third item2 discription',
+        'section' => 'third_section_page',
+        'type' => 'textarea',
+    ));
+
+    //item3 heading
+    $wp_customize->add_setting('third_item3_heading', array(
+        'default' => 'Free to Use',
+    ));
+
+    $wp_customize->add_control('third_item3_heading', array(
+        'label' => 'Section third item3 heading',
+        'section' => 'third_section_page',
+
+    ));
+
+    //item3 desc
+    $wp_customize->add_setting('third_item3_disc', array(
+        'default' => 'As always, this theme is free to download and use for any purpose!',
+    ));
+
+    $wp_customize->add_control('third_item3_disc', array(
+        'label' => 'Section third item3 discription',
+        'section' => 'third_section_page',
+        'type' => 'textarea',
+    ));
+    //item4 heading
+    $wp_customize->add_setting('third_item4_heading', array(
+        'default' => 'Open Source',
+    ));
+
+    $wp_customize->add_control('third_item4_heading', array(
+        'label' => 'Section third item4 heading',
+        'section' => 'third_section_page',
+
+    ));
+
+    //item4 desc
+    $wp_customize->add_setting('third_item4_disc', array(
+        'default' => 'Since this theme is MIT licensed, you can use it commercially!',
+    ));
+
+    $wp_customize->add_control('third_item4_disc', array(
+        'label' => 'Section third item3 discription',
+        'section' => 'third_section_page',
+        'type' => 'textarea',
+    ));
+
+    //-----------------------------------------------section four--------------------------------------------------------------
+
+    $wp_customize->add_section('forth_section_page', array(
+        'title' => 'Forth Section',
+        'description' => __('forth section customizer'),
+        'panel' => 'landing_panel'
+    ));
+
+    // heading
+    $wp_customize->add_setting('forth_heading', array(
+        'default' => 'Enter a new age of web design',
+    ));
+
+    $wp_customize->add_control('forth_heading', array(
+        'label' => 'Forth section heading',
+        'section' => 'forth_section_page',
+
+    ));
+
+    //description
+    $wp_customize->add_setting('forth_disc', array(
+        'default' => "This section is perfect for featuring some information about your application, why it was built, the problem it solves, or anything else! There's plenty of space for text here, so don't worry about writing too much.",
+    ));
+
+    $wp_customize->add_control('forth_disc', array(
+        'label' => 'Forth section discription',
+        'section' => 'forth_section_page',
+
+    ));
+
+    //image
+    $wp_customize->add_setting('forth_image', array(
+        'default' => '',
+    ));
+
+    $wp_customize->add_control(new WP_Customize_Image_Control(
+        $wp_customize,
+        'forth_image',
+        array(
+            'label' => 'Forth section image',
+            'section' => 'forth_section_page',
+            'type' => 'image'
+        )
+    ));
+
+    //-----------------------------------------------------section five------------------------------
+
+    $wp_customize->add_section('fifth_section_page', array(
+        'title' => 'Fifth Section',
+        'description' => __('Fifth section customizer'),
+        'panel' => 'landing_panel'
+    ));
+
+    //fifth head1
+    $wp_customize->add_setting('fifth_heading1', array(
+        'default' => "Stop Waiting",
+    ));
+
+    $wp_customize->add_control('fifth_heading1', array(
+        'label' => 'fifth section discription',
+        'section' => 'fifth_section_page',
+
+    ));
+
+    //fifth head2
+    $wp_customize->add_setting('fifth_heading2', array(
+        'default' => "Start building",
+    ));
+
+    $wp_customize->add_control('fifth_heading2', array(
+        'label' => 'fifth section discription',
+        'section' => 'fifth_section_page',
+
+    ));
+    ///fifth url
+    $wp_customize->add_setting('fifth_url', array(
+        'default' => "https://startbootstrap.com/theme/new-age",
+    ));
+
+    $wp_customize->add_control('fifth_url', array(
+        'label' => 'url for download button',
+        'section' => 'fifth_section_page',
+
+    ));
+
+    ///-----------------------------------------icon-----------------------------------
+
+    $wp_customize->add_section('my_section', array(
+        'title' => 'icon_section',
+        'description' => __('icon_section_custom'),
+        'panel' => 'landing_panel',
+
+    ));
+    $wp_customize->add_setting('fifth_heading2', array(
+        'default' => "Start building",
+    ));
+
+    $wp_customize->add_control('fifth_heading2', array(
+        'label' => 'fifth section discription',
+        'section' => 'my_section',
+
+    ));
+    $wp_customize->add_control(
+        new WP_Customize_Control(
+            $wp_customize,
+            'my_icon',
+            array(
+                'label' => __('Icon', 'mytheme'),
+                'section' => 'my_section',
+               'type'=>'select',
+              
+     
+
+            )
+        )
+    );
+    $wp_customize->add_setting('my_icon', array(
+        'default' => '',
+        'transport' => 'postMessage',
+    ));
+    ///----------------------------------------------changing positon--------------------------------------- 
+    // changin first section position
+    $wp_customize->add_setting('position_first', array());
+
+    $wp_customize->add_control('position_first', array(
+        'label' => 'change image position',
+        'section' => 'landing_page_home',
+        'type' => 'radio',
+        'choices' => array(
+            'right' => __('right'),
+            'left' => __('left'),
+        ),
+        'priority' => 1,
+    ));
+
+ 
+
+}
+add_action('customize_register', 'theme_customizer_function');
+
+///styling in function
+
+function customize_css()
+{
+?>
+    <style type="text/css">
+        #mainNav .navbar-nav .nav-item .nav-link {
+            color: <?php echo get_theme_mod('color_first') ?>;
+        }
+
+
+    </style>
+<?php
+}
+add_action('wp_head', 'customize_css');
